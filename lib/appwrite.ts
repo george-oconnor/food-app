@@ -3,12 +3,12 @@ import { CreateUserParams, GetMenuParams, SignInParams } from "../type";
 
 export const appwriteConfig = {
     endpoint: process.env.EXPO_PUBLIC_APPWRITE_ENDPOINT || 'https://fra.cloud.appwrite.io/v1',
-    platform: "com.jsm.foodordering",
+    platform: process.env.EXPO_PUBLIC_APPWRITE_PLATFORM!,
     projectId: process.env.EXPO_PUBLIC_APPWRITE_PROJECT_ID!,
     databaseId: "694299f9000308de0626",
     bucketId: "6942ce6f002a25f51021",
     userCollectionId: "user",
-    categoriesCollectionId: "categories",
+    categoriesCollectionId: "categories",      
     menuCollectionId: "menu",
     customizationsCollectionId: "customizations",
     menuCustomizationsCollectionId: "menu_customizations",
@@ -59,6 +59,15 @@ export const signIn = async ({email, password}: SignInParams) => {
     try {
         const session = await account.createEmailPasswordSession(email, password);
     } catch (e) {
+        throw new Error(e as string);
+    }
+}
+
+export const signOut = async () => {
+    try {
+        await account.deleteSession('current');
+    } catch (e) {
+        console.error('Sign out error:', e);
         throw new Error(e as string);
     }
 }

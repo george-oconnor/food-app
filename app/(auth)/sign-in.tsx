@@ -5,6 +5,7 @@ import { Alert, Text, View } from 'react-native'
 import CustomButton from '../../components/CustomButton'
 import CustomInput from '../../components/CustomInput'
 import { signIn } from '../../lib/appwrite'
+import useAuthStore from '../../store/auth.store'
 
 const SignIn = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,6 +13,7 @@ const SignIn = () => {
     email: '',
     password: ''
   });
+  const { fetchAuthenticatedUser } = useAuthStore();
 
   const submit = async () => {
     const { email, password } = form;
@@ -21,6 +23,9 @@ const SignIn = () => {
 
     try {
       await signIn({ email, password });
+
+      // Refresh auth state so protected routes stop redirecting back to sign-in
+      await fetchAuthenticatedUser();
 
       router.replace("/")
     } catch(error: any) {

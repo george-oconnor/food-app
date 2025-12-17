@@ -4,6 +4,7 @@ import { Alert, Text, View } from 'react-native'
 import CustomButton from '../../components/CustomButton'
 import CustomInput from '../../components/CustomInput'
 import { createUser } from '../../lib/appwrite'
+import useAuthStore from '../../store/auth.store'
 
 const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -12,6 +13,7 @@ const SignUp = () => {
     email: '',
     password: ''
   });
+  const { fetchAuthenticatedUser } = useAuthStore();
 
   const submit = async () => {
     const { name, email, password } = form;
@@ -23,6 +25,9 @@ const SignUp = () => {
 
     try {
       await createUser({ name, email, password });
+
+      // Newly created user is signed in; refresh auth state before redirect
+      await fetchAuthenticatedUser();
 
       router.replace("/")
     } catch(error: any) {
